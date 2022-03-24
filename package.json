@@ -1,0 +1,8 @@
+{
+  "name": "mini-Vue3",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:moxunjinmu/mini-Vue3.git",
+  "author": "moxunjingmu <1786471868@qq.com>",
+  "license": "MIT"
+}
