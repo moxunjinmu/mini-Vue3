@@ -33,7 +33,7 @@ class Dep{
     this.effects.forEach(effect => effect())
   }
 }
-function effectWatch(effect) {
+export function effectWatch(effect) {
   //收集依赖
   currentEffect = effect
   effect() //开始就调用一次
@@ -71,7 +71,7 @@ function getDep(target, key) {
 }
 const targetMap = new Map()
 
-function reactive (raw){
+export function reactive (raw){
   return new Proxy(raw, {
     get(target, key) {
       const dep = getDep(target, key)
@@ -90,14 +90,14 @@ function reactive (raw){
   })
 }
 
-const user = reactive({
-  age: 18
-})
+// const user = reactive({
+//   age: 18
+// })
 
-let NominalAge
-effectWatch(() => {
-  NominalAge = user.age + 1;
-  console.log("NominalAge", NominalAge);
-})
+// let NominalAge
+// effectWatch(() => {
+//   NominalAge = user.age + 1;
+//   console.log("NominalAge", NominalAge);
+// })
 
-user.age = 19;
+// user.age = 19;
