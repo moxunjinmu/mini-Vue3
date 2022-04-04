@@ -47,34 +47,44 @@ function effectWatch(effect) {
   // 属性需要一个个执行
 // vue3 -> Proxy
   //一次代理所有属性
+
+// 通过map建立每个对象key对应的dep
+function getDep(target, key) {
+  // 获取对象对应的map
+  let depsMap = targetMap.get(target)
+
+  // 第一次取可能为undefined，先初始化
+  if(!depsMap){
+    depsMap = new Map()
+    targetMap.set(target, depsMap)
+  }
+  
+  // 获取key值对应的dep()
+  let dep = depsMap.get(key)
+  // 如果没有获取到说明是第一次，将key对应的dep实力存入map
+  if(!dep) {
+    dep = new Dep();
+    depsMap.set(key, dep)
+  }
+
+  return dep
+}
 const targetMap = new Map()
 
 function reactive (raw){
   return new Proxy(raw, {
     get(target, key) {
-      console.log("key", key);
-      // dep存储
-      let depsMap = targetMap.get(target)
-
-      // 第一次取可能为undefined，先初始化
-      if(!depsMap){
-        depsMap = new Map()
-        targetMap.set(target, depsMap)
-      }
-      console.log("depsmap", depsMap);
-      let dep = depsMap.get(target, key)
-      if(!dep) {
-        dep = new Dep();
-        depsMap.set(key, dep)
-      }
-
+      const dep = getDep(target, key)
       // 依赖收集
       dep.depend()
       
       return Reflect.get(target, key)
     },
-    set(target, key) {
-
+    set(target, key, value) {
+      const dep = getDep(target, key)
+      const result = Reflect.set(target, key, value)
+      dep.notice()
+      return result
     }
 
   })
@@ -84,8 +94,10 @@ const user = reactive({
   age: 18
 })
 
+let NominalAge
 effectWatch(() => {
-  user.age
+  NominalAge = user.age + 1;
+  console.log("NominalAge", NominalAge);
 })
 
-user.age
+user.age = 19;
