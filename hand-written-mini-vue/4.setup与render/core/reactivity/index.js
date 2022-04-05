@@ -40,6 +40,14 @@ export function effectWatch(effect) {
   currentEffect = null
 }
 
+// 监听对象 ->将对象的key建立一个对应的map
+// 1.监听对象什么时候改变了
+
+// vue2 -> Object.defineProperties
+  // 属性需要一个个执行
+// vue3 -> Proxy
+  //一次代理所有属性
+
 // 通过map建立每个对象key对应的dep
 function getDep(target, key) {
   // 获取对象对应的map
@@ -81,3 +89,15 @@ export function reactive (raw){
 
   })
 }
+
+// const user = reactive({
+//   age: 18
+// })
+
+// let NominalAge
+// effectWatch(() => {
+//   NominalAge = user.age + 1;
+//   console.log("NominalAge", NominalAge);
+// })
+
+// user.age = 19;
