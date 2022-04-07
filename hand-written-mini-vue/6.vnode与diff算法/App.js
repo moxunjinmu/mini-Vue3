@@ -18,7 +18,7 @@ const App = {
   render(context) {
     // 通过h函数返回一个虚拟DOM
     // return h('div', {id: 1, class: 'vnode'}, context.state.count)
-    return h('div', {id: 1, class: 'vnode'}, [h('p', null, String(context.state.count)), h('p', null, '第二')])
+    return h('div', {id: "id" + context.state.count, class: 'vnode'}, [h('p', null, String(context.state.count)), h('p', null, '第二')])
   },
   setup() {
     const state = reactive({
