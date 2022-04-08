@@ -27,17 +27,66 @@ export function diff(n1, n2) {
       })
     }
     // b新props比老props少
-    if(oldProps){
+    if (oldProps) {
       Object.keys(newProps).forEach((key) => {
         if (!newProps[key]) {
           n1.el.removeAttribute(key)
         }
       })
     }
+    // 3.更新children 暴力算法
+    // 新children -> String    老children -> string
+    // 新children -> Array     老children -> array
+    const { children: newChildren } = n2
+    const { children: oldChildren } = n1
+    // 新children为string类型
+    if (typeof newChildren === 'string') {
+      if (typeof oldChildren === 'string') {
+        if (newChildren !== oldChildren) {
+          //! 这里不会替换
+          n2.el.textContent = newChildren
+        }
+      } else if (Array.isArray(oldChildren)) {
+        n2.el.textContent = newChildren
+      }
+
+    }
+    // 新children为Array类型
+    else if (Array.isArray(newChildren)) {
+      if (typeof oldChildren === 'string') {
+        n2.el.innerText = ''
+        mountElement(n2, n2.el)
+      } else if (Array.isArray(oldChildren)) {
+
+        //! 这里写错了
+        //XXXX diff(oldChildren, newChildren)XXXX
+        // 获取公共的length
+        const length = Math.min(newChildren.length, oldChildren.length)
+        for (let i = 0; i < length; i++) {
+          const newVnode = newChildren[i];
+          const oldVnode = oldChildren[i];
+          // 处理公共的vnode
+          diff(oldVnode, newVnode)
+          
+        }
+
+        if(newChildren.length > length){
+          // 创建节点
+          for (let i = length; i < newChildren.length; i++) {
+            //? 不会了
+            const newVnode = newChildren[i];
+            mountElement(newVnode, n2.el)
+          }
+        } else if(oldChildren.length < length) {
+          for (let i = length; i < oldChildren.length; i++) {
+            const oldVnode = oldChildren[i];
+            // 删除节点
+            oldVnode.el.parent.removeChild(oldVnode.el);
+          }
+        }
+      }
+    }
   }
-  // 3.更新children
-  // 新children -> String    老children -> string
-  // 新children -> Array     老children -> array
 }
 
 export function mountElement(vnode, container) {
